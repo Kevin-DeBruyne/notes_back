@@ -8,20 +8,15 @@ mongoose.set("strictQuery", false);
 main().catch((err) => console.log(err));
 app.set('view engine', 'ejs');
 app.use(cors());
-app.use(
-  bodyparser.urlencoded({
-    extended: true,
-  })
-);
+app.use(bodyparser.json())
 app.use(express.static("public"));
 
 async function main() {
   await mongoose.connect("mongodb://127.0.0.1:27017/api");
   console.log("connected");
-  // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
 const articleSchema = {
-    title: String,
+    title: {type: String, required:true},
     content: String
 };
 const Article = mongoose.model("Article", articleSchema);
@@ -31,21 +26,12 @@ app.get("/articles", function (req, res) {
         res.send(foundArticles);
     });
 });  
-app.post("/articles", function (req, res) {
-  console.log(req.body.title);
-  console.log(req.body.content);
-  const krishna = new Article({
+app.post("/articles",async function (req, res) {
+  const krishna = await Article.create({
     title: req.body.title,
     content: req.body.content,
-  });
-  krishna.save(function (err) {
-    if (err) {
-      res.send(err);
-    }
-    else {
-      res.send("successfully created new article")
-    }
-  });
+  });     
+    return res.json(krishna)  
 }); 
 app.delete("/articles", function (req, res) {
   Article.deleteMany(function (err) {
