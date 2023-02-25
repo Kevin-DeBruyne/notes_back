@@ -43,7 +43,6 @@ app.delete("/articles", function (req, res) {
     }
   });
 });   
-//to do
 app.listen(5000, function () {
     console.log("server started on port 5000");
 });
